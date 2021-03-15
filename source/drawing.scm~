@@ -19,8 +19,13 @@
 
 ; A ``polyline'' is represented by a list of ``point''s
 (define cons-polyline list)
-; if polyline is a ``polyline'' and point is a ``point'' , (polyline.prepend polyline point)
-; is the ``polyline'' whose first ``point'' is point and whose tail is poyline
+; if polyline is a ``polyline'' and point is a ``point'' , (polyline.preprend polyline point)
+; is the ``poyline'' whose first ``point'' is point and whose tail is poyline
+; Deprecated. Use polyline.prepend
+(define polyline.preprend
+  (lambda (polyline point)
+    (cons point polyline)))
+
 (define polyline.prepend
   (lambda (polyline point)
     (cons point polyline)))
