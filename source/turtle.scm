@@ -12,7 +12,7 @@
 ; It takes as input t-symb,  a ``turtle symbol'', and returns:
 ;;       the encapsulated ``drawing'', if t-symb is the empty string ""
 ;;       a ``turtle f-store'' encapsulating the new ``drawing'' corresponding to
-;;            chaning the current ``drawing'' according to the known
+;;            changing the current ``drawing'' according to the known
 ;;            ``turtle-symbol'' t-symb
 ;; or raises (error "Unknown turtle symbol") if t-symb is unknown
 
@@ -36,4 +36,62 @@
 ; (cons-init-turtle-store angle direction) returns a ``turtle f-store''
 ; encapsulating the empty ``drawing'', with the given initial direction (in radians)
 ;               a ``rotation angle'' of angle radians
-(define cons-init-turtle-store "TODO")
+(define cons-init-turtle-store "TO DO")
+
+(define cons-f-store
+  (lambda (drawing angle)
+    (lambda (tsymb)
+      (cond ((equal? "T")
+             (let ((position (drawing.position drawing))
+                   (direction (drawing.direction drawing))
+                   (new-position (cons-point (+ (point.x position) (cos direction)) (+ (point.y position) (sin direction)))))
+               (cons-f-store
+                (cons-drawing direction
+                              (drawing.saved-positions)
+                              (drawing.update-polyline drawing new-position)
+                              (drawing.update-bounding-box drawing new-position))
+                angle)))
+            
+            ((equal? "T[x]") "TO DO")  ; refine condition
+            
+            ((equal? "F")
+             (let ((position (drawing.position drawing))
+                   (direction (drawing.direction drawing))
+                   (new-position (cons-point (+ (point.x position) (cos direction)) (+ (point.y position) (sin direction)))))
+               (cons-f-store
+                (cons-drawing direction
+                              (drawing.saved-positions)
+                              (drawing.peek-new-polyline drawing new-position)
+                              (drawing.update-bounding-box drawing new-position))
+                angle)))
+            
+            ((equal? "F[x]") "TO DO")  ; refine condition
+            
+            ((equal? "<") "TO DO")
+            
+            ((equal? ">") "TO DO")
+
+            ((equal? "+")
+             (cons-f-store
+              (cons-drawing (+ (drawing.direction drawing) angle)
+                            (drawing.saved-positions drawing)
+                            (drawing.polylines drawing)
+                            (drawing.bounding-box drawing))
+              angle))
+
+            ((equal? "+[x]") "TO DO")  ; refine condition
+
+            ((equal? "-")
+             (cons-f-store
+              (cons-drawing (- (drawing.direction drawing) angle)
+                            (drawing.saved-positions drawing)
+                            (drawing.polylines drawing)
+                            (drawing.bounding-box drawing))
+              angle))
+
+
+            ((equal? "-[x]") "TO DO")  ; refine condition
+
+            (else "Unknown turtle symbol")
+      )
+    )
