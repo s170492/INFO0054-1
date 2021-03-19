@@ -44,7 +44,8 @@
       (cond ((equal? "T")
              (let ((position (drawing.position drawing))
                    (direction (drawing.direction drawing))
-                   (new-position (cons-point (+ (point.x position) (cos direction)) (+ (point.y position) (sin direction)))))
+                   (new-position (cons-point (+ (point.x position) (cos direction))
+                                             (+ (point.y position) (sin direction)))))
                (cons-f-store
                 (cons-drawing direction
                               (drawing.saved-positions)
@@ -67,10 +68,21 @@
             
             ((equal? "F[x]") "TO DO")  ; refine condition
             
-            ((equal? "<") "TO DO")
-            
-            ((equal? ">") "TO DO")
+            ((equal? "<")
+             (let ((direction (drawing.direction drawing)))
+               (cons-drawing direction
+                             (drawing.push-d&p drawing direction (drawing.position drawing))
+                             (drawing.polylines drawing)
+                             (drawing.bounding-box drawing))))
 
+            ((equal? ">")
+             (let* ((stack (drawing.pop-saved-positions)) (d&p (car stack)) (tail (cdr stack)))
+                   (if (null? stack) drawing
+                       (cons-drawing (d&p.direction d&p)
+                                     tail
+                                     (drawing.peek-new-polyline drawing (d&p.point d&p))
+                                     (drawing.bounding-box drawing)))))
+            
             ((equal? "+")
              (cons-f-store
               (cons-drawing (+ (drawing.direction drawing) angle)
