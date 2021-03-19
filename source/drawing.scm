@@ -1,7 +1,7 @@
 #lang racket
 
 (provide (all-defined-out))
-; A ``point'' is representd by a dotted pair (x . y), where
+; A ``point'' is represented by a dotted pair (x . y), where
 ;;        x is the x-cooridante of the point
 ;;        y is the y-coordinate of the point
 (define cons-point cons)
