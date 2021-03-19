@@ -36,90 +36,98 @@
 ; (cons-init-turtle-store angle direction) returns a ``turtle f-store''
 ; encapsulating the empty ``drawing'', with the given initial direction (in radians)
 ;               a ``rotation angle'' of angle radians
-(define cons-init-turtle-store "TO DO")
-
-(define cons-f-store
+(define cons-init-turtle-store
+  (lambda (angle direction)
+    (cons-turtle-store (cons-empty-drawing direction) angle)))
+                       
+(define cons-turtle-store
   (lambda (drawing angle)
     (lambda (t-symb)
-      (cond ((equal? t-symb "T")  ; T
+      (cond ((equal? t-symb "") drawing)  ; t-symb is the empty string
+            
+            ((equal? t-symb "T")  ; t-symb is T   works fine
              (let* ((position (drawing.position drawing))
                     (direction (drawing.direction drawing))
                     (new-position (cons-point (+ (point.x position) (cos direction))
                                               (+ (point.y position) (sin direction)))))
-               (cons-f-store
+               (cons-turtle-store
                 (cons-drawing direction
-                              (drawing.saved-positions)
+                              (drawing.saved-positions drawing)
                               (drawing.update-polyline drawing new-position)
                               (drawing.update-bounding-box drawing new-position))
                 angle)))
             
-            ((regexp-match? #px"T[[][\\d]+[]]" t-symb)  ; T[x]
-             (let* ((x (string->number (regexp-replace #rx"T|[[]|[]]" t-symb "")))
+            ((regexp-match? #px"T[[][\\d]+[]]" t-symb)  ; t-symb is T[x]   works fine
+             (let* ((x (string->number (regexp-replace* #rx"T|[[]|[]]" t-symb "")))
                     (position (drawing.position drawing))
                     (direction (drawing.direction drawing))
                     (new-position (cons-point (+ (point.x position) (* x (cos direction)))
                                               (+ (point.y position) (* x (sin direction))))))
-               (cons-f-store
+               (cons-turtle-store
                 (cons-drawing direction
-                              (drawing.saved-positions)
+                              (drawing.saved-positions drawing)
                               (drawing.update-polyline drawing new-position)
                               (drawing.update-bounding-box drawing new-position))
                 angle)))
              
             
-            ((equal? t-symb "F")  ; F
+            ((equal? t-symb "F")  ; t-symb is F
              (let* ((position (drawing.position drawing))
                     (direction (drawing.direction drawing))
                     (new-position (cons-point (+ (point.x position) (cos direction))
                                               (+ (point.y position) (sin direction)))))
-               (cons-f-store
+               (cons-turtle-store
                 (cons-drawing direction
-                              (drawing.saved-positions)
+                              (drawing.saved-positions drawing)
                               (drawing.peek-new-polyline drawing new-position)
                               (drawing.update-bounding-box drawing new-position))
                 angle)))
             
-            ((regexp-match? #px"F[[][\\d]+[]]" t-symb)  ; F[x]
-             (let* ((x (string->number (regexp-replace #rx"F|[[]|[]]" t-symb "")))
+            ((regexp-match? #px"F[[][\\d]+[]]" t-symb)  ; t-symb is F[x]
+             (let* ((x (string->number (regexp-replace* #rx"F|[[]|[]]" t-symb "")))
                     (position (drawing.position drawing))
                     (direction (drawing.direction drawing))
                     (new-position (cons-point (+ (point.x position) (* x (cos direction)))
                                               (+ (point.y position) (* x (sin direction))))))
-               (cons-f-store
+               (cons-turtle-store
                 (cons-drawing direction
-                              (drawing.saved-positions)
+                              (drawing.saved-positions drawing)
                               (drawing.peek-new-polyline drawing new-position)
                               (drawing.update-bounding-box drawing new-position))
                 angle)))
             
             
-            ((equal? t-symb "<")  ; <
+            ((equal? t-symb "<")  ; t-symb is <
              (let ((direction (drawing.direction drawing)))
-               (cons-drawing direction
-                             (drawing.push-d&p drawing direction (drawing.position drawing))
-                             (drawing.polylines drawing)
-                             (drawing.bounding-box drawing))))
+               (cons-turtle-store
+                (cons-drawing direction
+                              (drawing.push-d&p drawing direction (drawing.position drawing))
+                              (drawing.polylines drawing)
+                              (drawing.bounding-box drawing))
+                angle)))
 
-            ((equal? t-symb ">")  ; >
-             (let* ((stack (drawing.pop-saved-positions)) (d&p (car stack)) (tail (cdr stack)))
-                   (if (null? stack) drawing
-                       (cons-drawing (d&p.direction d&p)
-                                     tail
-                                     (drawing.peek-new-polyline drawing (d&p.point d&p))
-                                     (drawing.bounding-box drawing)))))
+            ((equal? t-symb ">")  ; t-symb is >
+             (let* ((stack (drawing.pop-saved-positions drawing)) (d&p (car stack)) (tail (cdr stack)))
+                   (if (null? stack) (cons-turtle-store drawing angle)
+                       (cons-turtle-store
+                        (cons-drawing (d&p.direction d&p)
+                                      tail
+                                      (drawing.peek-new-polyline drawing (d&p.point d&p))
+                                      (drawing.bounding-box drawing))
+                        angle))))
             
-            ((equal? t-symb "+")  ; +
-             (cons-f-store
+            ((equal? t-symb "+")  ; t-symb is +
+             (cons-turtle-store
               (cons-drawing (+ (drawing.direction drawing) angle)
                             (drawing.saved-positions drawing)
                             (drawing.polylines drawing)
                             (drawing.bounding-box drawing))
               angle))
 
-            ((equal? "+[x]") "TO DO")  ; +[x]
+            ((equal? t-symb "+[x]") "TO DO")  ; t-symb is +[x]
 
-            ((equal? t-symb "-")  ; -
-             (cons-f-store
+            ((equal? t-symb "-")  ; t-symb is -
+             (cons-turtle-store
               (cons-drawing (- (drawing.direction drawing) angle)
                             (drawing.saved-positions drawing)
                             (drawing.polylines drawing)
@@ -127,8 +135,6 @@
               angle))
 
 
-            ((equal? "-[x]") "TO DO")  ; -[x]
+            ((equal? t-symb "-[x]") "TO DO")  ; t-symb is -[x]
 
-            (else "Unknown turtle symbol")
-      )
-    )
+            (else (error "Unknown turtle symbol"))))))
