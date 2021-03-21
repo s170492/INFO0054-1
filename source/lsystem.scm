@@ -44,80 +44,121 @@
 (define lsystem.terminate-string
   (lambda (lsystem lstr)
     (if (null? lstr) '()
-        (flat (cons ((lsystem 't-rules) (car lstr)) (lsystem.terminate-string lsystem (cdr lstr))))))) ;on doit utiliser flat car des fois ça renvoie une liste de string (ex: la p-rules "B" -> ("B" "B")
-        ;(append ((lsystem 't-rules) (car lstr)) (lsystem.terminate-string lsystem (cdr lstr)))))))  ; autre variante si on renvoie (list s) pour tous les autres syboles - >peut-être mieux 
-
+        (append ((lsystem.t-rules lsystem) (car lstr)) (lsystem.terminate-string lsystem (cdr lstr))))))
 
 ; renvoie la order-th chaine non terminale du lsystem
 (define lsystem.develop-string
   (lambda (lsystem order)
-    (if (zero? order) (lsystem 'A)
+    (if (zero? order) (lsystem.axiom lsystem)
         (let ([lstr (lsystem.develop-string lsystem (- order 1))])
-          (flat (map (lsystem 'p-rules) lstr))))))
-
-(define flat
-  (lambda (ls)
-    (cond [(null? ls) '()]
-          [(list? (car ls)) (flat (append (car ls)(cdr ls)))]
-          [else (cons (car ls) (flat (cdr ls)))])))
+          (apply append (map (lsystem.p-rules lsystem) lstr))))))
 
 
+;; Un lsystems est représenté par une liste constituée de 3 listes telles que
+;;     -le car est l'axiome
+;;     -le cadr -> p-rules
+;;     -le caddr -> t-rules
+
+(define lsystem.axiom (lambda (lsystem) (car lsystem)))
+(define lsystem.p-rules (lambda (lsystem) (cadr lsystem)))
+(define lsystem.t-rules (lambda (lsystem) (caddr lsystem)))
 
 ; The ``Turtle L-system'' corresponding the Sierpinsky triangle
 (define sierpinski-triangle
-  (lambda (C)
-    (cond [(eq? C 'A) (list "A" "-" "B" "-" "B")]
-          [(eq? C 'N) (list "A" "B")]
-          [(eq? C 'Sigma) (list "T" "+" "-")]
-          [(eq? C 'p-rules) (lambda (s)
-                                      (cond [(eq? s "A") (list "A" "-" "B" "+" "A" "+" "B" "-" "A")]
-                                            [(eq? s "B") (list "B" "B")]
-                                            [else s]))]
-          [(eq? C 't-rules) (lambda (t)
-                                        (cond [(eq? t "A") (list "T")]
-                                              [(eq? t "B") (list "T")]
-                                              [else t]))]
-          [else "ERROR"])))
-; Exemple de l'énoncé du projet :
-
-(define lsystem-example
-  (lambda (C)
-    (let ([A (lambda (x) (cons "A" x))]
-          [F (lambda (x) (cons "F" x))])
-    (cond [(eq? C 'A) (list (A 16))] ; faut-il en faire une list d'un élément ?
-          [(eq? C 'p-rules) (lambda (s)
-                                      (cond [(and (pair? s) (eq? (car s) "A")) (list (A (/ (cdr s) 2)) "B")]
-                                            [(eq? s "B") (list "G" "B")]
-                                            [else s]))]
-          [(eq? C 't-rules) (lambda (t)
-                                        (cond [(and (pair? t) (eq? (car t) "A")) (list (F (cdr t)))]
-                                              [(eq? t "B") (list "G")]
-                                              [else t]))]
-          [else "ERROR"]))))
-
+  (list (list "A" "-" "B" "-" "B")
+        (lambda (s)
+          (cond [(eq? s "A") (list "A" "-" "B" "+" "A" "+" "B" "-" "A")]
+                [(eq? s "B") (list "B" "B")]
+                [else (list s)]))
+         (lambda (t)
+           (cond [(eq? t "A") (list "T")]
+                 [(eq? t "B") (list "T")]
+                 [else (list t)]))))
 
 ; The ``Turtle L-system'' corresponding the Sierpinsky carpet
-(define sierpinski-carpet "TODO")
+(define sierpinski-carpet
+  (list (list "T" "-" "T" "-" "T" "-" "T")
+        (lambda (s)
+          (cond [(eq? s "T") (list "T" "<" "-" "T" "-" "T" ">" "T" "<" "-" "T" "-" "T" "-" "T" ">" "T")]
+                [else (list s)]))
+        (lambda (t) (list t))))
+                             
 
 ; The ``Turtle L-system'' corresponding the dragon curve
-(define dragon-curve "TODO")
+(define dragon-curve
+  (list (list "D")
+        (lambda (s)
+          (cond [(eq? s "D") (list "-" "D" "+" "+" "E")]
+                [(eq? s "E") (list "D" "-" "-" "E" "+")]
+                [else (list s)]))
+        (lambda (t)
+          (cond [(eq? t "D") (list "-" "-" "T" "+" "+" "T")]
+                [(eq? t "E") (list "T" "-" "-" "T" "+" "+")]
+                [else (list t)]))))
 
 ; The ``Turtle L-system'' corresponding the tree growth
 
 (define tree-growth
-  (lambda (C)
-    (cond [(eq? C 'A) (list "T")]
-          [(eq? C 'N) '()]
-          [(eq? C 'Sigma) (list "T" "+" "-" "<" ">")]
-          [(eq? C 'p-rules) (lambda (s)
-                              (if (eq? s "T") (rand-proc-choice
-                                               (list
-                                                (cons 0.33 (list "T" "<" "+" "T" ">" "T" "<" "-" "T" ">" "T"))
-                                                (cons 0.33 (list "T" "<" "+" "T" ">" "T"))
-                                                (cons 0.34 (list "T" "<" "-" "T" ">" "T"))))
-                                  (lambda (s) s)))]
-          [(eq? C 't-rules) (lambda (t) (list t))]
-          [else "ERROR"])))
+  (list (list "T")
+        (lambda (s)
+          (if (eq? s "T") (rand-proc-choice
+                           (list
+                            (cons 0.33 (list "T" "<" "+" "T" ">" "T" "<" "-" "T" ">" "T"))
+                            (cons 0.33 (list "T" "<" "+" "T" ">" "T"))
+                            (cons 0.34 (list "T" "<" "-" "T" ">" "T"))))
+              (list s)))
+        (lambda (t) (list t))))
+    
+
+; The ``Turtle L-system'' corresponding the plant growth
+
+(define plant-growth
+  (let ([B (lambda (x) (cons "B" x))]
+        [T (lambda (x) (cons "T" x))]
+        [plus (lambda (x) (cons "plus" x))]
+        [minus (lambda (x) (cons "minus" x))])
+    (list (list (B 1))
+          (lambda (s)
+            (if (and (pair? s) (eq? (car s) "B"))
+                (let ([x (cdr s)])
+                  (list (T x) "<" (plus 5) (B (/ x 2)) ">"
+                        (minus 1) (T x) "<" (plus 4) (B (/ x 2)) ">" "<" (minus 7) (B (/ x 2)) ">"
+                        (minus 1) (T x) "<" (plus 3) (B (/ x 2)) ">" "<" (minus 5) (B (/ x 2)) ">"
+                        (minus 1) (T x) (B (/ x 2))))
+                (list s)))
+          (lambda (t)
+            (if (and (pair? t) (eq? (car t) "B")) (list (T (cdr t)))
+                (list t))))))
+          
+; The ``Turtle L-system'' corresponding the gosper curve
+(define gosper-curve
+    (list (list "A")
+        (lambda (s)
+          (cond [(eq? s "A") (list "A" "-" "B" "-" "-" "B" "+" "A" "+" "+" "A" "A" "+" "B" "-")]
+                [(eq? s "B") (list "+" "A" "-" "B" "B" "-" "-" "B" "-" "A" "+" "+" "A" "+" "B")]
+                [else (list s)]))
+        (lambda (t)
+          (cond [(eq? t "A") (list "T")]
+                [(eq? t "E") (list "T")]
+                [else (list t)]))))
+
+
+; Exemple de l'énoncé du projet :
+
+(define lsystem-example
+  (let ([A (lambda (x) (cons "A" x))]
+        [F (lambda (x) (cons "F" x))])
+    (list (list (A 16))
+          (lambda (s)
+            (cond [(and (pair? s) (eq? (car s) "A")) (list (A (/ (cdr s) 2)) "B")]
+                  [(eq? s "B") (list "G" "B")]
+                  [else (list s)]))
+          (lambda (t)
+            (cond [(and (pair? t) (eq? (car t) "A")) (list (F (cdr t)))]
+                  [(eq? t "B") (list "G")]
+                  [else (list t)])))))
+;; Fonctions auxilliaires
+
 ;; si ls est une liste dont de paires pointées dont les cdr sont des procédures f et dont le car est un nombre p_f tels que somme p_f = 1
 ;; renvoie la procédure f avec probabilité p_f
 (define rand-proc-choice
@@ -133,31 +174,13 @@
       (lambda (ls.r)
         (let ([r (cdr ls.r)] [p (caaar ls.r)])
         (if (< r p) (cdaar ls.r)
-            (proc-choice (cons (cdar ls.r) (- r p))))))) 
+            (proc-choice (cons (cdar ls.r) (- r p)))))))
+#|
+(define flat
+  (lambda (ls)
+    (cond [(null? ls) '()]
+          [(list? (car ls)) (flat (append (car ls)(cdr ls)))]
+          [else (cons (car ls) (flat (cdr ls)))])))
+|#
       
-          
-
-; The ``Turtle L-system'' corresponding the plant growth
-(define plant-growth
-  (lambda (C)
-    (let ([B (lambda (x) (cons "B" x))]
-          [T (lambda (x) (cons "B" x))]
-          [plus (lambda (x) (cons "plus" x))]
-          [minus (lambda (x) (cons "minus" x))])
-      (cond [(eq? C 'A) (list (B 1))]
-            [(eq? C 'p-rules) (lambda (s)
-                                (if (and (pair? s) (eq? (car s) "B"))
-                                    (let ([x (cdr s)])
-                                      (list (T x) "<" (plus 5) (B (/ x 2)) ">"
-                                            (minus 1) (T x) "<" (plus 4) (B (/ x 2)) ">" "<" (minus 7) (B (/ x 2)) ">"
-                                            (minus 1) (T x) "<" (plus 3) (B (/ x 2)) ">" "<" (minus 5) (B (/ x 2)) ">"
-                                            (minus 1) (T x) (B (/ x 2))))
-                                s))]
-            [(eq? C 't-rules) (lambda (t)
-                                (if (and (pair? t) (eq? (car t) "B")) (T (cdr t))
-                                    t))]
-            [else "ERROR"]))))
-
-
-; The ``Turtle L-system'' corresponding the gosper curve
-(define gosper-curve "TODO")
+     
