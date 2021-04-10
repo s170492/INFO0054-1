@@ -5,12 +5,17 @@
 (provide tlsyst.lsystem)
 
 (provide sierpinski-triangle)
+(provide sierpinski-arrowhead)
 (provide sierpinski-carpet)
 (provide dragon-curve)
 (provide tree-growth)
 (provide plant-growth)
+(provide branch-growth)
+(provide binary-tree)
 (provide gosper-curve)
 (provide koch-snowflake)
+(provide koch-antisnowflake)
+(provide koch-curve)
 
 ; a ``Turtle L-system'' contains the representation of a ``L-system'' generating
 ; a ``Turtle string'' and the rotation angle.
@@ -96,7 +101,7 @@
     (apply append (map (lsystem.t-rules lsystem) ls))))
 
 
-; The ``Turtle L-system'' corresponding the Sierpinsky triangle
+; The ``Turtle L-system'' corresponding to the Sierpinsky triangle
 (define sierpinski-triangle
   (cons (list '("A" "-" "B" "-" "B")
               (list '("A" ("A" "-" "B" "+" "A" "+" "B" "-" "A"))
@@ -105,14 +110,23 @@
                     '("B" ("T"))))
         120))
 
-; The ``Turtle L-system'' corresponding the Sierpinsky carpet
+; The ``Turtle L-system'' corresponding to the Sierpinsky arrowhead
+(define sierpinski-arrowhead
+  (cons (list '("A")
+              (list '("A" ("B" "-" "A" "-" "B"))
+                    '("B" ("A" "+" "B" "+" "A")))
+              (list '("A" ("T"))
+                    '("B" ("T"))))
+        60))
+
+; The ``Turtle L-system'' corresponding to the Sierpinsky carpet
 (define sierpinski-carpet
   (cons (list '("T" "-" "T" "-" "T" "-" "T")
               (list '("T" ("T" "<" "-" "T" "-" "T" ">" "T" "<" "-" "T" "-" "T" "-" "T" ">" "T")))
               (list))
         90))
 
-; The ``Turtle L-system'' corresponding the dragon curve
+; The ``Turtle L-system'' corresponding to the dragon curve
 (define dragon-curve
   (cons (list '("D")
               (list '("D" ("-" "D" "+" "+" "E"))
@@ -121,7 +135,7 @@
                     '("E" ("T" "-" "-" "T" "+" "+"))))
         45))
 
-; The ``Turtle L-system'' corresponding the tree growth
+; The ``Turtle L-system'' corresponding to the tree growth
 (define tree-growth
   (cons (list '("T")
               (list '("T" ("T" "<" "+" "T" ">" "T" "<" "-" "T" ">" "T") 0.33)
@@ -130,12 +144,29 @@
               (list))
         25.7))
 
-; The ``Turtle L-system'' corresponding the plant growth
+; The ``Turtle L-system'' corresponding to the plant growth
 (define plant-growth
   (cons "TODO"
         8))
 
-; The ``Turtle L-system'' corresponding the Gosper curve
+; The ``Turtle L-system'' corresponding to the branch growth
+(define branch-growth
+  (cons (list '("X")
+              (list '("X" ("T" "-" "<" "<" "X" ">" "+" "X" ">" "+" "T" "<" "+" "T" "X" ">" "-" "X"))
+                    '("T" ("T" "T")))
+              (list '("X" ())))
+        25))
+
+; The ``Turtle L-system'' corresponding to a binary tree
+(define binary-tree
+  (cons (list '("A")
+              (list '("A" ("B" "<" "+" "A" ">" "-" "A"))
+                    '("B" ("B" "B")))
+              (list '("A" ("T"))
+                    '("B" ("T"))))
+        45))
+
+; The ``Turtle L-system'' corresponding to the Gosper curve
 (define gosper-curve
   (cons (list '("A")
               (list '("A" ( "A" "-" "B" "-" "-" "B" "+" "A" "+" "+" "A" "A" "+" "B" "-"))
@@ -144,9 +175,23 @@
                     '("B" ("T"))))
         60))
 
-; The ``Turtle L-system'' corresponding the Koch snowflake
+; The ``Turtle L-system'' corresponding to the Koch snowflake
 (define koch-snowflake
   (cons (list '("T" "-" "-" "T" "-" "-" "T")
               (list '("T" ("T" "+" "T" "-" "-" "T" "+" "T")))
               (list))
         60))
+
+; The ``Turtle L-system'' corresponding to the Koch antisnowflake
+(define koch-antisnowflake
+  (cons (list '("T" "-" "-" "T" "-" "-" "T")
+              (list '("T" ("T" "-" "T" "+" "+" "T" "-" "T")))
+              (list))
+        60))
+
+; The ``Turtle L-system'' corresponding to the Koch curve
+(define koch-curve
+  (cons (list '("T")
+              (list '( "T" ("T" "-" "T" "+" "T" "+" "T" "-" "T")))
+              (list))
+        90))
