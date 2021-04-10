@@ -10,6 +10,7 @@
 (provide tree-growth)
 (provide plant-growth)
 (provide gosper-curve)
+(provide koch-snowflake)
 
 ; a ``Turtle L-system'' contains the representation of a ``L-system'' generating
 ; a ``Turtle string'' and the rotation angle.
@@ -25,7 +26,7 @@
 
 ; a ``L-system'' contains an axiom, the representation of a set of production rules
 ; and the representation of a set of terminal rules.
-; It is represented as a triplet (axiom prules trules)
+; It is represented as a triplet (axiom p-rules t-rules)
 
 ; a set of rules is represented by a list l of representations of rules
 ; such that (map (lambda (rule) (cons (car rule) (cadr rule))) l) is without repetition
@@ -40,16 +41,16 @@
 ; if lsystem is a ``L-system'', (lsystem.axiom lsystem) is the axiom of the L-system
 (define lsystem.axiom car)
 
-; if lsystem is a ``L-system'', (lsystem.prules lsystem) is a function the maps every
+; if lsystem is a ``L-system'', (lsystem.p-rules lsystem) is a function the maps every
 ; symbol to a sequence of symbols, according to the production rules of the L-system
-(define lsystem.prules
+(define lsystem.p-rules
   (lambda (lsystem)
     (lambda (s) (apply-rules s (random) (cadr lsystem)))))
 
-; if lsystem is a ``L-system'', (lsystem.prules lsystem) is a function the maps every
+; if lsystem is a ``L-system'', (lsystem.p-rules lsystem) is a function the maps every
 ; nonterminal symbol to a sequence of terminal symbols,
 ; according to the production rules of the L-system
-(define lsystem.trules
+(define lsystem.t-rules
   (lambda (lsystem)
     (lambda (s) (apply-rules s (random) (caddr lsystem)))))
 
@@ -84,7 +85,7 @@
 (define lsystem.develop-string
   (lambda (lsystem order)
     (if (zero? order) (lsystem.axiom lsystem)
-        (apply append (map (lsystem.prules lsystem)
+        (apply append (map (lsystem.p-rules lsystem)
                            (lsystem.develop-string lsystem (- order 1)))))))
 
 ; if lsystem is the representation of a ``L-system'' and ls is a list of symbols,
@@ -92,7 +93,7 @@
 ; termination rules of lsystem to the string ls
 (define lsystem.terminate-string
   (lambda (lsystem ls)
-    (apply append (map (lsystem.trules lsystem) ls))))
+    (apply append (map (lsystem.t-rules lsystem) ls))))
 
 
 ; The ``Turtle L-system'' corresponding the Sierpinsky triangle
@@ -105,19 +106,47 @@
         120))
 
 ; The ``Turtle L-system'' corresponding the Sierpinsky carpet
-(define sierpinski-carpet (cons "TODO" 90))
+(define sierpinski-carpet
+  (cons (list '("T" "-" "T" "-" "T" "-" "T")
+              (list '("T" ("T" "<" "-" "T" "-" "T" ">" "T" "<" "-" "T" "-" "T" "-" "T" ">" "T")))
+              (list))
+        90))
 
 ; The ``Turtle L-system'' corresponding the dragon curve
-(define dragon-curve (cons "TODO" 45))
+(define dragon-curve
+  (cons (list '("D")
+              (list '("D" ("-" "D" "+" "+" "E"))
+                    '("E" ("D" "-" "-" "E" "+")))
+              (list '("D" ("-" "-" "T" "+" "+" "T"))
+                    '("E" ("T" "-" "-" "T" "+" "+"))))
+        45))
 
 ; The ``Turtle L-system'' corresponding the tree growth
-(define tree-growth (cons "TODO" 25.7))
+(define tree-growth
+  (cons (list '("T")
+              (list '("T" ("T" "<" "+" "T" ">" "T" "<" "-" "T" ">" "T") 0.33)
+                    '("T" ("T" "<" "+" "T" ">" "T") 0.33)
+                    '("T" ("T" "<" "-" "T" ">" "T") 0.34))
+              (list))
+        25.7))
 
 ; The ``Turtle L-system'' corresponding the plant growth
-(define plant-growth (cons "TODO" 8))
+(define plant-growth
+  (cons "TODO"
+        8))
 
 ; The ``Turtle L-system'' corresponding the Gosper curve
-(define gosper-curve (cons "TODO" 60))
+(define gosper-curve
+  (cons (list '("A")
+              (list '("A" ( "A" "-" "B" "-" "-" "B" "+" "A" "+" "+" "A" "A" "+" "B" "-"))
+                    '("B" ("+" "A" "-" "B" "B" "-" "-" "B" "-" "A" "+" "+" "A" "+" "B")))
+              (list '("A" ("T"))
+                    '("B" ("T"))))
+        60))
 
 ; The ``Turtle L-system'' corresponding the Koch snowflake
-(define koch-snowflake (cons "TODO" 60))
+(define koch-snowflake
+  (cons (list '("T" "-" "-" "T" "-" "-" "T")
+              (list '("T" ("T" "+" "T" "-" "-" "T" "+" "T")))
+              (list))
+        60))
