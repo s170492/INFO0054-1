@@ -4,6 +4,8 @@
 (require "svg.scm")
 (require "turtle.scm")
 
+(provide generate-and-draw*)
+
 (random-seed 0)
 
 ; if tlsyst is a ``turtle L-system'' (see "lsystem.scm"), order, width and height
