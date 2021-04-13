@@ -4,6 +4,25 @@
 (require "drawing.scm")
 (provide cons-init-turtle-store)
 
+; the two following functions extend the drawing package
+
+; if drawing is a ``drawing'' and point is a ``point'', (drawing.update-polyline drawing point)
+; returns a list of polylines, where the first is the first polyline of drawing, extended by point
+; and the other polylines are the other polylines of drawing.
+(define drawing.update-polyline
+  (lambda (drawing point)
+    (let ((polylines (drawing.polylines drawing)))
+      (cons (polyline.prepend (car polylines) point) (cdr polylines)))))
+
+; if drawing is a ``drawing'' and point is a ``point'', (drawing.update-bounding-box drawing point)
+; returns the smallest bounding-box containing both point and the bounding-box of drawing.
+(define drawing.update-bounding-box
+  (lambda (drawing point)
+    (cons-bounding-box (min (point.x point) (drawing.minx drawing))
+                       (min (point.y point) (drawing.miny drawing))
+                       (max (point.x point) (drawing.maxx drawing))
+                       (max (point.y point) (drawing.maxy drawing)))))
+
 
 ; A ``turtle f-store'' is a function encapsulating in its closure:
 ;;        a ``drawing'' (see "drawing.scm")
