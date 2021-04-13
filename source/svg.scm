@@ -15,9 +15,9 @@
           (rangex (- (drawing.maxx drawing) minx))
           (rangey (- (drawing.maxy drawing) miny)))
       (string-join (list "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>"
-                         (format "<svg xmlns=\"http://www.w3.org/2000/svg\"
-                                       xmlns:xlink=\"http://www.w3.org/1999/xlink\"
-                                       width=\"~a\" height=\"~a\" viewBox=\"~a ~a ~a ~a\">"
+                         "<svg xmlns=\"http://www.w3.org/2000/svg\""
+                         "xmlns:xlink=\"http://www.w3.org/1999/xlink\""
+                         (format "width=\"~a\" height=\"~a\" viewBox=\"~a ~a ~a ~a\">"
                                  width height (~r minx #:precision 5) (~r miny #:precision 5)
                                  (~r rangex #:precision 5) (~r rangey #:precision 5))
                          (format "<rect x=\"~a\" y=\"~a\" width=\"100%\" height=\"100%\" fill=\"white\"/>"
