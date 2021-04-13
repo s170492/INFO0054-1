@@ -43,6 +43,13 @@
 ;;               and p a real number such that 0 < p < 1
 ;;               if there are several rules associated with s
 
+; a symbol is represented by either
+;;        a string if it as no parameter
+;;        a list whose car is a string and whose cdr is a
+;;               (non necessarily flat) list of scheme symbols
+;;               the special symbols '+, '*, '- and '/ cannot be used to name parameters
+;;               they should not be confused with the turtle symbols "+" and "-"!
+
 ; if lsystem is a ``L-system'', (lsystem.axiom lsystem) is the axiom of the L-system
 (define lsystem.axiom car)
 
@@ -146,7 +153,12 @@
 
 ; The ``Turtle L-system'' corresponding to the plant growth
 (define plant-growth
-  (cons "TODO"
+  (cons (list '(("B" x))
+              (list '(("B" x) (("T" x) "<" ("+" 5) ("B" (* 0.5 x)) ">" "<" ("-" 7) ("B" (* 0.5 x)) ">"
+                               "-" ("T" x) "<" ("+" 4) ("B" (* 0.5 x)) ">" "<" ("-" 7) ("B" (* 0.5 x)) ">"
+                               "-" ("T" x) "<" ("+" 3) ("B" (* 0.5 x)) ">" "<" ("-" 5) ("B" (* 0.5 x)) ">"
+                               "-" ("T" x) ("B" (* 0.5 x)))))
+              (list '(("B" x) (("T" x)))))
         8))
 
 ; The ``Turtle L-system'' corresponding to the branch growth
