@@ -13,7 +13,7 @@
 (time "TODO")
 (time (generate-and-draw* branch-growth 8 500 500 "../figures/branch.svg"))
 (time (generate-and-draw* binary-tree 13 500 500 "../figures/binary-tree.svg"))
-(time (generate-and-draw* gosper-curve 6 500 500 "../figures/gosper-curve.svg"))
+(time (generate-and-draw* gosper-curve 5 500 500 "../figures/gosper-curve.svg"))
 (time (generate-and-draw* koch-snowflake 8 500 500 "../figures/koch-snowflake.svg"))
 (time (generate-and-draw* koch-antisnowflake 8 500 500 "../figures/koch-antisnowflake.svg"))
 (time (generate-and-draw* koch-curve 7 500 500 "../figures/koch-curve.svg"))
