@@ -38,10 +38,29 @@
 
 ; a rule is represented by either
 ;;        a pair (s S) where s is a symbol and S a list of symbols,
-;;               if there is only one rule associated with s
+;;               if there is only one rule associated with s (nonstochastic rule)
 ;;        a triplet (s S p) where s is a symbol, S a list of symbols,
 ;;               and p a real number such that 0 < p < 1
-;;               if there are several rules associated with s
+;;               if there are several rules associated with s (stochastic rule)
+
+; a symbol is represented by either
+;;        a string if it as no parameter
+;;        a list whose car is a string and whose cdr is a
+;;               list of arithmetical expression.
+; a symbol is flat if every arithmetical expression occuring in it is a variable
+
+; an arithmetical expression is either a number, a variable or a list
+; whose car is one of the special scheme symbols '+, '-, '*, '/ and whose cdr
+; is a list of arithmetical expressions
+
+; a variable is a scheme symbol different from '+, '-, '*, '/
+
+; if a and b are symbols, (symb= a b) returns true if a and b represent the
+; same symbol, that is if (car a) and (car b) represent the same string
+(define symb=?
+  (lambda (a b)
+    (let ((head (lambda (x) (if (list? x) (car x) x))))
+      (string=? (head a) (head b)))))
 
 ; if lsystem is a ``L-system'', (lsystem.axiom lsystem) is the axiom of the L-system
 (define lsystem.axiom car)
@@ -50,30 +69,76 @@
 ; symbol to a sequence of symbols, according to the production rules of the L-system
 (define lsystem.p-rules
   (lambda (lsystem)
-    (lambda (s) (apply-rules s (random) (cadr lsystem)))))
+    (lambda (s) (apply-rules s (cadr lsystem)))))
 
 ; if lsystem is a ``L-system'', (lsystem.p-rules lsystem) is a function the maps every
 ; nonterminal symbol to a sequence of terminal symbols,
 ; according to the production rules of the L-system
 (define lsystem.t-rules
   (lambda (lsystem)
-    (lambda (s) (apply-rules s (random) (caddr lsystem)))))
+    (lambda (s) (apply-rules s (caddr lsystem)))))
+
+; if s is a symbol and rules a set of rules, then (apply-rules s rules) is the
+; result of applying the rules to the symbol s. If several rules are associated
+; to the symbol s, a random number between 0 and 1 is chosen and the function
+; apply-stoch-rules is called to chose a rule to apply
+(define apply-rules
+  (lambda (s rules)
+    (if (null? rules) (list s)
+        (let ((rule (car rules)))
+          (cond ((and (symb=? s (car rule)) (= (length rule) 2))  ; nonstochastic rule
+                 (apply-rule s rule))
+                ((symb=? s (car rule)) (apply-stoch-rules s rules (random)))  ; stochastic rule
+                (else (apply-rules s (cdr rules))))))))
 
 ; if s is a symbol, p a real number chosen uniformly at random between 0 and 1
-; and rules a set of rules, then (apply-rules s p rules) is the result of applying
-; the rules to the symbol s. If several rules are associated to the symbol s, their
-; probabilities are summed until it becomes greater than p, and the rule that
-; allowed the sum to go above p is chosen
-(define apply-rules
-  (lambda (s p rules)
-    (cond ((null? rules) (list s))
-          ((equal? s (caar rules))
-           (let ((rule (car rules)))
-             (cond ((= (length rule) 2) (cadr rule))
-                   ((< p (caddr rule)) (cadr rule))
-                   (else (apply-rules s (- p (caddr rule)) (cdr rules))))))
-          (else (apply-rules s p (cdr rules))))))
+; and rules a set of rules, then (apply-stoch-rules s rules p) is the result of
+; applying the rules to the symbol s. To chose the rule, the probabilities
+; associated with the rules (reporting to s) are summed until it goes above p,
+; and the last rule to be added to the sum is chosen.
+(define apply-stoch-rules
+  (lambda (s rules p)
+    (if (null? rules) (list s)
+        (let ((rule (car rules)))
+          (cond ((and (symb=? s (car rule)) (< p (caddr rule)))
+                 (apply-rule s rule))
+                ((symb=? s (car rule)) (apply-stoch-rules s (cdr rules) (- p (caddr rule))))
+                (else (apply-stoch-rules s (cdr rules) p)))))))
 
+; if s is a symbol and rule is a rule, (apply-rule s rule) is the result of
+; applying the rule to the symbol
+(define apply-rule
+  (lambda (s rule)
+    (if (string? s) (cadr rule)  ; no parameter to deal with
+        (let* ((values (cdr s)) (variables (cdar rule)) (str (cadr rule)))
+          (map (lambda (s) (eval-symbol s variables values)) str)))))
+
+; if s is a symbol, variables is a list of variables and values is a list of
+; numbers such that every variable corresponds to a value, then
+; (eval-symbol s variables values) is the symbol obtained by replacing every
+; variable in s by its value and simplifying
+(define eval-symbol
+  (lambda (s variables values)
+    (if (string? s) s
+        (cons (car s) (map (lambda (e) (eval-ari-exp e variables values))
+                           (cdr s))))))
+
+; if exp is an arithmetical expression, variables is a list of variables and
+; values is a list of numbers such that every variable corresponds to a value,
+; then (eval-ari-exp exp variables values) corresponds to the number obtained
+; by replacing every variable in exp by its value and simplifying
+(define eval-ari-exp
+  (lambda (exp variables values)
+    (cond ((number? exp) exp)
+          ((and (symbol? exp) (eq? exp (car variables))) (car values))
+          ((symbol? exp) (eval-ari-exp exp (cdr variables) (cdr values)))
+          (else (let ((op (car exp))
+                      (args (map (lambda (e) (eval-ari-exp e variables values))
+                                 (cdr exp))))
+                  (cond ((eq? op '+) (apply + args))
+                        ((eq? op '-) (apply - args))
+                        ((eq? op '*) (apply * args))
+                        ((eq? op '/) (apply / args))))))))          
 
 ; if lsystem is the representation of a  ``L-system'' and order is a natural,
 ; (lsystem.generate-string lsystem order) returns an order-th ``L-system string''
@@ -146,7 +211,12 @@
 
 ; The ``Turtle L-system'' corresponding to the plant growth
 (define plant-growth
-  (cons "TODO"
+  (cons (list '(("B" 1))
+              (list '(("B" x) (("T" x) "<" ("+" 5) ("B" (* 0.5 x)) ">" "<" ("-" 7) ("B" (* 0.5 x)) ">"
+                               "-" ("T" x) "<" ("+" 4) ("B" (* 0.5 x)) ">" "<" ("-" 7) ("B" (* 0.5 x)) ">"
+                               "-" ("T" x) "<" ("+" 3) ("B" (* 0.5 x)) ">" "<" ("-" 5) ("B" (* 0.5 x)) ">"
+                               "-" ("T" x) ("B" (* 0.5 x)))))
+              (list '(("B" x) (("T" x)))))
         8))
 
 ; The ``Turtle L-system'' corresponding to the branch growth
@@ -160,7 +230,8 @@
 ; The ``Turtle L-system'' corresponding to a binary tree
 (define binary-tree
   (cons (list '("A")
-              (list '("A" ("B" "<" "+" "A" ">" "-" "A"))
+              (list '("A" ("B" "<" "+" "A" ">" "-" "A") 0.75)
+                    '("A" ("A") 0.25)
                     '("B" ("B" "B")))
               (list '("A" ("T"))
                     '("B" ("T"))))
