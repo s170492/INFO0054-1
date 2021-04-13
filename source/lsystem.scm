@@ -211,7 +211,7 @@
 
 ; The ``Turtle L-system'' corresponding to the plant growth
 (define plant-growth
-  (cons (list '(("B" x))
+  (cons (list '(("B" 1))
               (list '(("B" x) (("T" x) "<" ("+" 5) ("B" (* 0.5 x)) ">" "<" ("-" 7) ("B" (* 0.5 x)) ">"
                                "-" ("T" x) "<" ("+" 4) ("B" (* 0.5 x)) ">" "<" ("-" 7) ("B" (* 0.5 x)) ">"
                                "-" ("T" x) "<" ("+" 3) ("B" (* 0.5 x)) ">" "<" ("-" 5) ("B" (* 0.5 x)) ">"
