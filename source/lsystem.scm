@@ -17,6 +17,7 @@
 (provide koch-antisnowflake)
 (provide koch-curve)
 
+
 ; a ``Turtle L-system'' contains the representation of a ``L-system'' generating
 ; a ``Turtle string'' and the rotation angle.
 ; It is represented as a dotted paid (lsystem . angle)
@@ -28,6 +29,7 @@
 ; if tlsyst is a ``Turtle L-system'', (tlsyst.lsystem tlsyst) is the
 ; representation of the L-system associated with the ``Turtle L-system''
 (define tlsyst.lsystem car)
+
 
 ; a ``L-system'' contains an ``axiom'', the representation of a set of
 ; production ``rules'' and the representation of a set of terminal ``rules''.
@@ -51,6 +53,7 @@
 (define lsystem.t-rules
   (lambda (lsystem)
     (lambda (s) (apply-rules s (caddr lsystem)))))
+
 
 ; a set of ``rules'' is represented by a list l of representations of ``rules''
 
@@ -78,6 +81,7 @@
 ; (rule.proba rule) is the probability
 (define rule.proba caddr)
 
+
 ; a ``symbol'' is either
 ;;        a string  if it as no parameter
 ;;        a list whose car is a string and whose cdr is
@@ -99,11 +103,13 @@
   (lambda (a b)
       (string=? (symb.head a) (symb.head b))))
 
+
 ; an ``arithmetical expression'' is either a number, a ``variable'' or a list
 ; whose car is one of the special scheme symbols '+, '-, '*, '/ and whose cdr
 ; is a list of ``arithmetical expressions''
 
 ; a ``variable'' is a scheme symbol different from '+, '-, '*, '/
+
 
 ; if s is a ``symbol'' whose parameters are numbers and rules a set of ``rules''
 ; then (apply-rules s rules) is the result of applying the ``rules'' to
@@ -171,6 +177,7 @@
                         ((eq? op '-) (apply - args))
                         ((eq? op '*) (apply * args))
                         ((eq? op '/) (apply / args))))))))          
+
 
 ; if lsystem is the representation of a  ``L-system'' and order is a natural,
 ; (lsystem.generate-string lsystem order) returns an order-th ``L-system string''
