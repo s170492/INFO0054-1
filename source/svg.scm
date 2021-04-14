@@ -14,10 +14,9 @@
           (miny (drawing.miny drawing))
           (rangex (- (drawing.maxx drawing) minx))
           (rangey (- (drawing.maxy drawing) miny)))
-      (string-join (list "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>"
-                         "<svg xmlns=\"http://www.w3.org/2000/svg\""
-                         "xmlns:xlink=\"http://www.w3.org/1999/xlink\""
-                         (format "width=\"~a\" height=\"~a\" viewBox=\"~a ~a ~a ~a\">"
+      (string-join (list "<svg xmlns=\"http://www.w3.org/2000/svg\""
+                         "     xmlns:xlink=\"http://www.w3.org/1999/xlink\""
+                         (format "     width=\"~a\" height=\"~a\" viewBox=\"~a ~a ~a ~a\">"
                                  width height (~r minx #:precision 5) (~r miny #:precision 5)
                                  (~r rangex #:precision 5) (~r rangey #:precision 5))
                          (format "<rect x=\"~a\" y=\"~a\" width=\"100%\" height=\"100%\" fill=\"white\"/>"
@@ -30,9 +29,8 @@
                          "</svg>")
                    "\n"))))
 
-; if polyline is a polyline and width is a positive number then
-; (polyline->svg) returns the SVG representation as a string of
-; the given polyline with the given width
+; if polyline is a polyline and width is a positive number then (polyline->svg)
+; returns the SVG representation as a string of the given polyline with the given width
 (define polyline->svg
   (lambda (polyline width)
     (string-join
