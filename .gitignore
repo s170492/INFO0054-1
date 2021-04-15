@@ -6,4 +6,5 @@
 *.scm#*
 .#*.scm
 
+*.bak
 source/compiled
