@@ -37,18 +37,18 @@
 
 ; an ``axiom'' is a list of ``symbols'' whose ``parameters'' are numbers
 
-; if lsystem is a ``L-system'', (lsystem.axiom lsystem) is the axiom of the L-system
+; if lsystem is a ``L-system'', (lsystem.axiom lsystem) is the ``axiom'' of the L-system
 (define lsystem.axiom car)
 
 ; if lsystem is a ``L-system'', (lsystem.p-rules lsystem) is a function the maps
-; every symbol to a sequence of symbols,
+; every symbol to a list of symbols,
 ; according to the production rules of the L-system
 (define lsystem.p-rules
   (lambda (lsystem)
     (lambda (s) (apply-rules s (cadr lsystem)))))
 
 ; if lsystem is a ``L-system'', (lsystem.p-rules lsystem) is a function the maps
-; every nonterminal symbol to a sequence of terminal symbols,
+; every nonterminal symbol to a list of terminal symbols,
 ; according to the production rules of the L-system
 (define lsystem.t-rules
   (lambda (lsystem)
@@ -57,10 +57,10 @@
 
 ; a set of ``rules'' is represented by a list l of representations of ``rules''
 
-; a ``rule'' is either
+; a ``rule'' is represented by either
 ;;        a pair (s ls)  if there is no probability associated with it,
 ;;               where s is the ``symbol'' the ``rule'' applies to
-;;                      whose ``parameters'' are ``variables''
+;;                      whose ``parameters'' are ``variables''if any
 ;;               and ls is a list of ``symbols'' the ``rule'' translates to
 ;;        a triplet (s ls p)  if there is a probability associated with it,
 ;;               s and ls are as above and p is a number such that 0 < p < 1
@@ -94,7 +94,7 @@
 (define symb.head
   (lambda (s) (if (param? s) (car s) s)))
 
-; if s is a symbol ``symbol'', (symb.params s) its list of parameters
+; if s is a symbol ``symbol'' with parameters, (symb.params s) its list of parameters
 (define symb.params cdr)
 
 ; if a and b are ``symbols'', (symb= a b) returns true if a and b represent the
@@ -111,11 +111,11 @@
 ; a ``variable'' is a scheme symbol different from '+, '-, '*, '/
 
 
-; if s is a ``symbol'' whose parameters are numbers and rules a set of ``rules''
+; if s is a ``symbol'' whose parameters, if any, are numbers, and rules a set of ``rules''
 ; then (apply-rules s rules) is the result of applying the ``rules'' to
-; the ``symbol'' s. If several ``rules'' are associated to the ``symbol s'',
+; the ``symbol'' s. If several ``rules'' are associated to the ``symbol'' s,
 ; a random number between 0 and 1 is chosen and the function apply-stoch-rules
-; is called to chose which ``rule'' to apply to the ``symbol''
+; is called to chose which ``rule'' to apply to the ``symbol''. 
 (define apply-rules
   (lambda (s rules)
     (if (null? rules) (list s)
@@ -126,10 +126,9 @@
                  (apply-rule s rule))  ; no probability associated
                 (else (apply-rules s (cdr rules))))))))
 
-; if s is a ``symbol'' as above, p a real number chosen uniformly at random
-; between 0 and 1 and rules a set of ``rules'', then
+; if s is a ``symbol'' whose parameters, if any, are numbers, p a number between 0 and 1 and rules a set of ``rules'', then
 ; (apply-stoch-rules s rules p) is the result of applying the ``rules'' to the
-; ``symbol'' s to chose the ``rule'' to apply, the probabilities associated
+; ``symbol'' s. To choose the ``rule'' to apply, the probabilities associated
 ; with the ``rules'' (reporting to s) are summed until it goes above p,
 ; then the last ``rule'' to be added to the sum is applied to the ``symbol''
 (define apply-stoch-rules
@@ -179,7 +178,7 @@
                         ((eq? op '/) (apply / args))))))))          
 
 
-; if lsystem is the representation of a  ``L-system'' and order is a natural,
+; if lsystem is the representation of a  ``L-system'' and order is a natural number,
 ; (lsystem.generate-string lsystem order) returns an order-th ``L-system string''
 ; A ``L-system string'' is represented as a list of ``symbols''
 ; Note that an order of zero means applying the termination rules to the axiom
