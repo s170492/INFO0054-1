@@ -10,7 +10,7 @@
 (time (generate-and-draw* dragon-curve 16 500 500 "../figures/dragon-curve.svg"))
 (time (generate-and-draw* tree-growth 9 500 500 "../figures/tree.svg"))
 (time (generate-and-draw* plant-growth 5 500 500 "../figures/plant.svg"))
-(time (generate-and-draw* gosper-curve 6 500 500 "../figures/gosper-curve.svg"))
+(time (generate-and-draw* gosper-curve 5 500 500 "../figures/gosper-curve.svg"))
 (time (generate-and-draw* koch-snowflake 8 500 500 "../figures/koch-snowflake.svg"))
 (time (generate-and-draw* sierpinski-arrowhead 11 500 500 "../figures/sierpinski-arrowhead.svg"))
 (time (generate-and-draw* branch-growth 8 500 500 "../figures/branch.svg"))
