@@ -79,7 +79,7 @@
                               (drawing.update-bounding-box drawing new-position))
                 angle)))
             
-            ((regexp-match? #px"T\\[\\d+\\]" t-symb)  ; t-symb is T[x]
+            ((regexp-match? #px"^T\\[\\d+(.\\d+)?\\]$" t-symb)  ; t-symb is T[x]
              (let* ((x (string->number (regexp-replace* #rx"[T[]|[]]" t-symb "")))
                     (position (drawing.position drawing))
                     (direction (drawing.direction drawing))
@@ -105,7 +105,7 @@
                               (drawing.update-bounding-box drawing new-position))
                 angle)))
             
-            ((regexp-match? #px"F\\[\\d+\\]" t-symb)  ; t-symb is F[x]
+            ((regexp-match? #px"^F\\[\\d+(.\\d+)?\\]$" t-symb)  ; t-symb is F[x]
              (let* ((x (string->number (regexp-replace* #rx"[F[]|[]]" t-symb "")))
                     (position (drawing.position drawing))
                     (direction (drawing.direction drawing))
@@ -146,7 +146,7 @@
                             (drawing.bounding-box drawing))
               angle))
 
-            ((regexp-match? #px"\\+\\[\\d+\\]" t-symb)  ; t-symb is +[x]
+            ((regexp-match? #px"^\\+\\[\\d+(.\\d+)?\\]$" t-symb)  ; t-symb is +[x]
              (let ((x (string->number (regexp-replace* #rx"[+[]|[]]" t-symb ""))))
                (cons-turtle-store
                 (cons-drawing (+ (drawing.direction drawing) (* x angle))
@@ -164,7 +164,7 @@
               angle))
 
 
-            ((regexp-match? #px"\\-\\[\\d+\\]" t-symb)  ; t-symb is -[x]
+            ((regexp-match? #px"^\\-\\[\\d+(.\\d+)?\\]$" t-symb)  ; t-symb is -[x]
              (let ((x (string->number (regexp-replace* #rx"[+[]|[]]" t-symb ""))))
                (cons-turtle-store
                 (cons-drawing (+ (drawing.direction drawing) (* x angle))
