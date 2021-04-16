@@ -5,22 +5,54 @@
 (provide tlsyst.lsystem)
 
 (provide sierpinski-triangle)
-(provide sierpinski-arrowhead)
 (provide sierpinski-carpet)
 (provide dragon-curve)
 (provide tree-growth)
 (provide plant-growth)
-(provide branch-growth)
-(provide binary-tree)
 (provide gosper-curve)
 (provide koch-snowflake)
+(provide sierpinski-arrowhead)
+(provide branch-growth)
+(provide binary-tree)
 (provide koch-antisnowflake)
 (provide koch-curve)
 
 
+;; DEFINITION
+
 ; a ``Turtle L-system'' contains the representation of a ``L-system'' generating
 ; a ``Turtle string'' and the rotation angle.
 ; It is represented as a dotted paid (lsystem . angle)
+
+; a ``L-system'' contains an ``axiom'', the representation of a set of
+; production ``rules'' and the representation of a set of terminal ``rules''.
+; It is represented as a triplet (axiom p-rules t-rules)
+
+; an ``axiom'' is a list of ``symbols'' whose ``parameters'', if any, are numbers
+
+; a set of ``rules'' is represented by a list l of representations of ``rules''
+
+; a ``rule'' is represented by either
+;;        a pair (s ls)  if there is no probability associated with it,
+;;               where s is the ``symbol'' the ``rule'' applies to
+;;                      whose ``parameters'', if any, are ``variables''
+;;               and ls is the list of ``symbols'' the ``rule'' translates to
+;;        a triplet (s ls p)  if there is a probability associated with it,
+;;               s and ls are as above and p is a number such that 0 < p < 1
+
+; a ``symbol'' is either
+;;        a string, if it as no parameter
+;;        a list whose car is a string and whose cdr is
+;;               a list of ``arithmetical expression'', its ``parameters''
+
+; an ``arithmetical expression'' is either a number, a ``variable'' or a list
+; whose car is one of the special scheme symbols '+, '-, '*, '/ and whose cdr
+; is a list of ``arithmetical expressions''
+
+; a ``variable'' is a scheme symbol different from '+, '-, '*, '/ and '()
+
+
+;; TURTLE L-SYSTEM GETTERS
 
 ; if tlsyst is a ``Turtle L-system'', (tlsyst.angle tlsyst) is the rotation
 ; angle (in degree) associated to the ``Turtle L-system''
@@ -31,11 +63,7 @@
 (define tlsyst.lsystem car)
 
 
-; a ``L-system'' contains an ``axiom'', the representation of a set of
-; production ``rules'' and the representation of a set of terminal ``rules''.
-; It is represented as a triplet (axiom p-rules t-rules)
-
-; an ``axiom'' is a list of ``symbols'' whose ``parameters'' are numbers
+;; L-SYSTEM GETTERS
 
 ; if lsystem is a ``L-system'', (lsystem.axiom lsystem) is the ``axiom'' of the L-system
 (define lsystem.axiom car)
@@ -55,15 +83,7 @@
     (lambda (s) (apply-rules s (caddr lsystem)))))
 
 
-; a set of ``rules'' is represented by a list l of representations of ``rules''
-
-; a ``rule'' is represented by either
-;;        a pair (s ls)  if there is no probability associated with it,
-;;               where s is the ``symbol'' the ``rule'' applies to
-;;                      whose ``parameters'' are ``variables''if any
-;;               and ls is a list of ``symbols'' the ``rule'' translates to
-;;        a triplet (s ls p)  if there is a probability associated with it,
-;;               s and ls are as above and p is a number such that 0 < p < 1
+;; RULE GETTERS AND PREDICATES
 
 ; if rule is a ``rule'', (proba? rule) returns true if there is a
 ; probability associated with the rule
@@ -82,10 +102,7 @@
 (define rule.proba caddr)
 
 
-; a ``symbol'' is either
-;;        a string  if it as no parameter
-;;        a list whose car is a string and whose cdr is
-;;               a list of ``arithmetical expression'', its ``parameters''
+;; SYMBOL GETTERS AND PREDICATES
 
 ; if s is a ``symbol'', (param? s) returns true if s has parameters
 (define param? list?)
@@ -104,12 +121,7 @@
       (string=? (symb.head a) (symb.head b))))
 
 
-; an ``arithmetical expression'' is either a number, a ``variable'' or a list
-; whose car is one of the special scheme symbols '+, '-, '*, '/ and whose cdr
-; is a list of ``arithmetical expressions''
-
-; a ``variable'' is a scheme symbol different from '+, '-, '*, '/
-
+;; APPLYING A SET OF RULES TO A SYMBOL
 
 ; if s is a ``symbol'' whose parameters, if any, are numbers, and rules a set of ``rules''
 ; then (apply-rules s rules) is the result of applying the ``rules'' to
@@ -140,6 +152,9 @@
                 ((symb=? s (rule.applies-to rule))
                  (apply-stoch-rules s (cdr rules) (- p (rule.proba rule))))  ; sum is below p
                 (else (apply-stoch-rules s (cdr rules) p)))))))
+
+
+;; APPLYING A SINGLE RULE TO A SYMBOL
 
 ; if s is a ``symbol'' as above and rule is a ``rule'', (apply-rule s rule) is
 ; the result of applying the ``rule'' to the ``symbol''
@@ -178,14 +193,16 @@
                         ((eq? op '/) (apply / args))))))))          
 
 
-; if lsystem is the representation of a  ``L-system'' and order is a natural number,
-; (lsystem.generate-string lsystem order) returns an order-th ``L-system string''
-; A ``L-system string'' is represented as a list of ``symbols''
+;; GENERATING A STRING FROM A L-SYSTEM
+
+; if lsystem is the representation of a ``L-system'' and order is a natural number,
+; (lsystem.generate-string lsystem order) returns an order-th ``Turtle string''
 ; Note that an order of zero means applying the termination rules to the axiom
 (define lsystem.generate-string
     (lambda (lsystem order)
-        (lsystem.terminate-string lsystem
-                                  (lsystem.develop-string lsystem order))))
+      (lstr->tstr
+       (lsystem.terminate-string lsystem
+                                 (lsystem.develop-string lsystem order)))))
 
 ; if lsystem is the representation of a ``L-system'' and order is a natural,
 ; (lsystem.develop-string lsystem order) returns the result of applying the
@@ -196,6 +213,8 @@
         (apply append (map (lsystem.p-rules lsystem)
                            (lsystem.develop-string lsystem (- order 1)))))))
 
+; A ``L-system string'' is represented as a list of ``symbols''
+
 ; if lsystem is the representation of a ``L-system'' and ls is a ``L-system string''
 ; (lsystem.terminate-string lsystem ls) returns the result of applying the
 ; termination rules of the ``L-system'' to the ``L-system string''
@@ -203,6 +222,23 @@
   (lambda (lsystem ls)
     (apply append (map (lsystem.t-rules lsystem) ls))))
 
+; if lsymb is a ``symbol'', (lsymb->tsymb lsymb) is the corresponding ``Turtle symbol''
+; that is, any symbol of the form ("S" x) is converted to "S[x]"
+(define lsymb->tsymb
+  (lambda (lsymb)
+    (if (not (param? lsymb)) lsymb
+        (string-append (symb.head lsymb)
+                       "["
+                       (string-join (map ~r (symb.params lsymb)) ", ")
+                       "]"))))
+                                                    
+; if lstr is a ``L-system string'', (lstr->tstr lstr) is a ``Turtle string''
+(define lstr->tstr
+  (lambda (lstr)
+    (map lsymb->tsymb lstr)))
+
+
+;; EXAMPLES OF L-SYSTEMS
 
 ; The ``Turtle L-system'' corresponding to the Sierpinsky triangle
 (define sierpinski-triangle
@@ -212,15 +248,6 @@
               (list '("A" ("T"))
                     '("B" ("T"))))
         120))
-
-; The ``Turtle L-system'' corresponding to the Sierpinsky arrowhead
-(define sierpinski-arrowhead
-  (cons (list '("A")
-              (list '("A" ("B" "-" "A" "-" "B"))
-                    '("B" ("A" "+" "B" "+" "A")))
-              (list '("A" ("T"))
-                    '("B" ("T"))))
-        60))
 
 ; The ``Turtle L-system'' corresponding to the Sierpinsky carpet
 (define sierpinski-carpet
@@ -257,6 +284,31 @@
               (list '(("B" x) (("T" x)))))
         8))
 
+; The ``Turtle L-system'' corresponding to the Gosper curve
+(define gosper-curve
+  (cons (list '("A")
+              (list '("A" ( "A" "-" "B" "-" "-" "B" "+" "A" "+" "+" "A" "A" "+" "B" "-"))
+                    '("B" ("+" "A" "-" "B" "B" "-" "-" "B" "-" "A" "+" "+" "A" "+" "B")))
+              (list '("A" ("T"))
+                    '("B" ("T"))))
+        60))
+
+; The ``Turtle L-system'' corresponding to the Koch snowflake
+(define koch-snowflake
+  (cons (list '("T" "-" "-" "T" "-" "-" "T")
+              (list '("T" ("T" "+" "T" "-" "-" "T" "+" "T")))
+              (list))
+        60))
+
+; The ``Turtle L-system'' corresponding to the Sierpinsky arrowhead
+(define sierpinski-arrowhead
+  (cons (list '("A")
+              (list '("A" ("B" "-" "A" "-" "B"))
+                    '("B" ("A" "+" "B" "+" "A")))
+              (list '("A" ("T"))
+                    '("B" ("T"))))
+        60))
+
 ; The ``Turtle L-system'' corresponding to the branch growth
 (define branch-growth
   (cons (list '("X")
@@ -274,22 +326,6 @@
               (list '("A" ("T"))
                     '("B" ("T"))))
         45))
-
-; The ``Turtle L-system'' corresponding to the Gosper curve
-(define gosper-curve
-  (cons (list '("A")
-              (list '("A" ( "A" "-" "B" "-" "-" "B" "+" "A" "+" "+" "A" "A" "+" "B" "-"))
-                    '("B" ("+" "A" "-" "B" "B" "-" "-" "B" "-" "A" "+" "+" "A" "+" "B")))
-              (list '("A" ("T"))
-                    '("B" ("T"))))
-        60))
-
-; The ``Turtle L-system'' corresponding to the Koch snowflake
-(define koch-snowflake
-  (cons (list '("T" "-" "-" "T" "-" "-" "T")
-              (list '("T" ("T" "+" "T" "-" "-" "T" "+" "T")))
-              (list))
-        60))
 
 ; The ``Turtle L-system'' corresponding to the Koch antisnowflake
 (define koch-antisnowflake
