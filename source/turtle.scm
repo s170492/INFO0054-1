@@ -69,7 +69,7 @@
             ((regexp-match? #px"^[TF+-](\\[\\d+(.\\d+)?\\])?$" t-symb)
              (let* ((s (regexp-replace #px"\\[\\d+(.\\d+)?\\]" t-symb ""))
                     (x (string->number
-                        (regexp-replace #px"[TF+-]\\[|\\]" t-symb "")))
+                        (regexp-replace* #px"[TF+-]\\[|\\]" t-symb "")))
                     (defx (if x x 1)))
                (cond ((string=? s "T")  ; s is T
                       (let* ((position (drawing.position drawing))
