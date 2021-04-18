@@ -366,14 +366,15 @@
 ; The ``Turtle L-system'' corresponding to the Cesaro fractal (85)
 (define cesaro-fractal85
   (cons (list '("T")
-              (list '("T" ("T" ("-" 85) "T" ("+" 170) "T" ("-" 85) "T")))
+              (list '("T" ("T" "-" "T" ("+" 2) "T" "-" "T")))
               (list))
-        1))
+        85))
+
 ; The ``Turtle L-system'' corresponding to the Cesaro fractal (90)
 (define cesaro-fractal90
   (cons (list '("T")
-              (list '("T" ("T" ("-" 90) "T" ("+" 180) "T" ("-" 90) "T")))
+              (list '("T" ("T" "-" "T" ("+" 2) "T" "-" "T")))
               (list))
-        1))
+        90))
 
 
