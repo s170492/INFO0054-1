@@ -20,7 +20,9 @@
 ;(time (generate-and-draw* hilbert-curve 6 500 500 "../figures/hilbert-curve.svg"))
 ;(time (generate-and-draw* cesaro-fractal85 7 500 500 "../figures/cesaro-fractal85.svg"))
 ;(time (generate-and-draw* cesaro-fractal90 7 500 500 "../figures/cesaro-fractal90.svg"))
-
-
-
-
+;(time (generate-and-draw* twindragon-curve 10 500 500 "../figures/twindragon-curve.svg"))
+;(time (generate-and-draw* terdragon-curve 7 500 500 "../figures/terdragon-curve.svg"))
+;(time (generate-and-draw* pentadendrite 4 500 500 "../figures/pentadendrite.svg"))
+;(time (generate-and-draw* gosper-island 6 500 500 "../figures/gosper-island.svg"))
+;(time (generate-and-draw* minkowski-island 5 500 500 "../figures/minkowski-island.svg"))
+;(time (generate-and-draw* moore-curve 5 500 500 "../figures/moore-curve.svg"))

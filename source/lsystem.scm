@@ -19,6 +19,12 @@
 (provide hilbert-curve)
 (provide cesaro-fractal85)
 (provide cesaro-fractal90)
+(provide twindragon-curve)
+(provide terdragon-curve)
+(provide pentadendrite)
+(provide gosper-island)
+(provide minkowski-island)
+(provide moore-curve)
 
 
 ;; DEFINITION
@@ -377,4 +383,48 @@
               (list))
         90))
 
+; The ``Turtle L-system'' corresponding to the twindragon curve
+(define twindragon-curve
+  (cons (list '("T" "X" "+" "T" "X" "+")
+              (list '("X" ("X" "+" "Y" "T"))
+                    '("Y" ("T" "X" "-" "Y")))
+              (list '("X" ())
+                    '("Y" ())))
+        90))
 
+; The ``Turtle L-system'' corresponding to the terdragon curve
+(define terdragon-curve
+  (cons (list '("T")
+              (list '("T" ("T" "+" "T" "-" "T")))
+              (list))
+        120))
+
+; The ``Turtle L-system'' corresponding to the pentadendrite
+(define pentadendrite
+  (cons (list '("T")
+              (list '("T" ("T" "+" "T" "-" "T" "-" "-" "T" "+" "T" "+" "T")))
+              (list))
+        72))
+
+; The ``Turtle L-system'' corresponding to the Gosper island
+(define gosper-island
+  (cons (list '("T" "-" "T" "-" "T" "-" "T" "-" "T" "-" "T")
+              (list '("T" ("T" "-" "T" "+" "T")))
+              (list))
+        60))
+
+; The ``Turtle L-system'' corresponding to the Minkowski island
+(define minkowski-island
+  (cons (list '("T" "+" "T" "+" "T" "+" "T")
+              (list '("T" ("T" "-" "T" "+" "T" "+" "T" "T" "-" "T" "-" "T" "+" "T")))
+              (list))
+        90))
+
+; The ``Turtle L-system'' corresponding to the Moore curve
+(define moore-curve
+  (cons (list '("L" "T" "L" "+" "T" "+" "L" "T" "L")
+              (list '("L" ("-" "R" "T" "+" "L" "T" "L" "+" "T" "R" "-"))
+                    '("R" ("+" "L" "T" "-" "R" "T" "R" "-" "T" "L" "+")))
+              (list '("R" ())
+                    '("L" ())))
+        90))
