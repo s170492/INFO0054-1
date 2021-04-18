@@ -165,8 +165,8 @@
 
 ;; APPLYING A SINGLE RULE TO A SYMBOL
 
-; if s is a ``symbol'' as above and rule is a ``rule'', (apply-rule s rule) is
-; the result of applying the ``rule'' to the ``symbol''
+; if s is a ``symbol'' whose parameters, if any, are numbers, and if rule is a ``rule'',
+; then (apply-rule s rule) is the result of applying the ``rule'' to the ``symbol''
 (define apply-rule
   (lambda (s rule)
     (if (not (param? s)) (rule.translates-to rule)  ; no parameter to deal with
@@ -185,7 +185,8 @@
         (cons (symb.head s) (map (lambda (e) (eval-ari-exp e variables values))
                                  (symb.params s))))))
 
-; if exp is an ``arithmetical expression'' and variables, values are as above,
+; if exp is an ``arithmetical expression'', variables is a list of ``variables''
+; and values is a  list of numbers such that every ``variable'' corresponds to a value,
 ; then (eval-ari-exp exp variables values) corresponds to the number obtained
 ; by replacing every ``variable'' in exp by its value and simplifying
 (define eval-ari-exp
@@ -354,7 +355,7 @@
 ; The ``Turtle L-system'' corresponding to the Hilbert curve
 (define hilbert-curve
   (cons (list '("A")
-              (list '("A" ("+" "B" "T" "−" "A" "T" "A" "−" "T" "B" "+"))
+              (list '("A" ("+" "B" "T" "-" "A" "T" "A" "-" "T" "B" "+"))
                     '("B" ("-" "A" "T" "+" "B" "T" "B" "+" "T" "A" "-")))
               (list '("A" ())
                     '("B" ())))

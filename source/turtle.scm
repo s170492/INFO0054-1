@@ -41,7 +41,8 @@
 ;;  F,    which means move forward one unit and start a new polyline there
 ;;  F[x], which means move forward x units and start a new polyline there
 ;;  <,    which means save the current position and direction
-;;  >,    which means restore the last position and direction saved if there were any, otherwise, does nothing
+;;  >,    which means restore the last position and direction saved if there were any,
+;;                                                                  otherwise, does nothing
 ;;  +,    which means make a unit change of  direction
 ;;  +[x], which means make a change of direction of x units
 ;;  -,    which means make a change of direction of -1 unit
@@ -128,4 +129,4 @@
                                    (drawing.peek-new-polyline drawing (d&p.point d&p))
                                    (drawing.bounding-box drawing))
                      angle))))
-             (else (error "Unknown turtle symbol"))))))
+             (else (error (format "Unknown turtle symbol: ~s" t-symb)))))))
