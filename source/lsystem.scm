@@ -16,9 +16,17 @@
 (provide binary-tree)
 (provide koch-antisnowflake)
 (provide koch-curve)
+(provide hilbert-curve)
 
 
 ;; DEFINITION
+
+; a ``Turtle string'' is a finite sequence of elements that are part of the
+; following symbols :
+;    T, T[x], F, F[x], <, >, +, +[x], -, -[x] where x is a number.
+; It is represented as a list whose elements are part of the following strings :
+;    "T", "T[x]", "F", "F[x]", "<", ">", "+", "+[x]", "-", "-[x]"
+; where x is a number.
 
 ; a ``Turtle L-system'' contains the representation of a ``L-system'' generating
 ; a ``Turtle string'' and the rotation angle.
@@ -138,8 +146,9 @@
                  (apply-rule s rule))  ; no probability associated
                 (else (apply-rules s (cdr rules))))))))
 
-; if s is a ``symbol'' whose parameters, if any, are numbers, p a number between 0 and 1 and rules a set of ``rules'', then
-; (apply-stoch-rules s rules p) is the result of applying the ``rules'' to the
+; if s is a ``symbol'' whose parameters, if any, are numbers, p a number strictly
+; between 0 and 1 and rules a set of ``rules'',
+; then (apply-stoch-rules s rules p) is the result of applying the ``rules'' to the
 ; ``symbol'' s. To choose the ``rule'' to apply, the probabilities associated
 ; with the ``rules'' (reporting to s) are summed until it goes above p,
 ; then the last ``rule'' to be added to the sum is applied to the ``symbol''
@@ -195,8 +204,9 @@
 
 ;; GENERATING A STRING FROM A L-SYSTEM
 
-; if lsystem is the representation of a ``L-system'' and order is a natural number,
-; (lsystem.generate-string lsystem order) returns an order-th ``Turtle string''
+; if lsystem is the representation of a ``L-system'' generating a ``Turtle string''
+; and order is a natural number,
+; then (lsystem.generate-string lsystem order) returns an order-th ``Turtle string''
 ; Note that an order of zero means applying the termination rules to the axiom
 (define lsystem.generate-string
     (lambda (lsystem order)
@@ -339,4 +349,13 @@
   (cons (list '("T")
               (list '( "T" ("T" "-" "T" "+" "T" "+" "T" "-" "T")))
               (list))
+        90))
+
+; The ``Turtle L-system'' corresponding to the Hilbert curve
+(define hilbert-curve
+  (cons (list '("A")
+              (list '("A" ("+" "B" "T" "−" "A" "T" "A" "−" "T" "B" "+"))
+                    '("B" ("-" "A" "T" "+" "B" "T" "B" "+" "T" "A" "-")))
+              (list '("A" ())
+                    '("B" ())))
         90))
