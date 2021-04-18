@@ -18,4 +18,9 @@
 ;(time (generate-and-draw* koch-antisnowflake 8 500 500 "../figures/koch-antisnowflake.svg"))
 ;(time (generate-and-draw* koch-curve 7 500 500 "../figures/koch-curve.svg"))
 ;(time (generate-and-draw* hilbert-curve 7 500 500 "../figures/hilbert-curve.svg"))
+(time (generate-and-draw* cesaro-fractal85 7 500 500 "../figures/cesaro-fractal85.svg"))
+(time (generate-and-draw* cesaro-fractal90 9 500 500 "../figures/cesaro-fractal90.svg"))
+
+
+
 

@@ -17,6 +17,8 @@
 (provide koch-antisnowflake)
 (provide koch-curve)
 (provide hilbert-curve)
+(provide cesaro-fractal85)
+(provide cesaro-fractal90)
 
 
 ;; DEFINITION
@@ -360,3 +362,18 @@
               (list '("A" ())
                     '("B" ())))
         90))
+
+; The ``Turtle L-system'' corresponding to the Cesaro fractal (85)
+(define cesaro-fractal85
+  (cons (list '("T")
+              (list '("T" ("T" ("-" 85) "T" ("+" 170) "T" ("-" 85) "T")))
+              (list))
+        1))
+; The ``Turtle L-system'' corresponding to the Cesaro fractal (90)
+(define cesaro-fractal90
+  (cons (list '("T")
+              (list '("T" ("T" ("-" 90) "T" ("+" 180) "T" ("-" 90) "T")))
+              (list))
+        1))
+
+
