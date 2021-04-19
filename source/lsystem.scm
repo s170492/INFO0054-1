@@ -17,7 +17,7 @@
 (provide koch-antisnowflake)
 (provide koch-curve)
 (provide hilbert-curve)
-(provide cesaro-fractal)
+(provide cesaro)
 (provide twindragon-curve)
 (provide terdragon-curve)
 (provide pentadendrite)
@@ -27,6 +27,9 @@
 (provide fibonacci-fractal)
 (provide sierpinski-curve)
 (provide sierpinski-square)
+(provide peano-curve)
+(provide levy-c-curve)
+(provide n-flake)
 
 
 ;; DEFINITION
@@ -372,11 +375,11 @@
         90))
 
 ; The ``Turtle L-system'' corresponding to the Cesaro fractal (85)
-(define cesaro-fractal
+(define (cesaro angle)
   (cons (list '("T")
               (list '("T" ("T" "-" "T" ("+" 2) "T" "-" "T")))
               (list))
-        85))
+        angle))
 
 ; The ``Turtle L-system'' corresponding to the twindragon curve
 (define twindragon-curve
@@ -453,3 +456,27 @@
               (list '("F" ("T"))
                     '("X" ())))
         90))
+
+; The ``Turtle L-system'' corresponding to the Peano curve
+(define peano-curve
+  (cons (list '("L")
+              (list '("L" ("L" "T" "R" "T" "L" "-" "T" "-" "R" "T" "L" "T" "R" "+" "T" "+" "L" "T" "R" "T" "L"))
+                    '("R" ("R" "T" "L" "T" "R" "+" "T" "+" "L" "T" "R" "T" "L" "-" "T" "-" "R" "T" "L" "T" "R")))
+              (list '("L" ())
+                    '("R" ())))
+        90))
+
+; The ``Turtle L-system'' corresponding to the Lévy C curve
+(define levy-c-curve
+  (cons (list '("T")
+              (list '("T" ("+" "T" "-" "-" "T" "+")))
+              (list))
+        45))
+
+; The ``Turtle L-system'' corresponding to the n-flake
+(define (n-flake n)
+  (cons (list (apply append (build-list n (const '("T" "+"))))
+              (list '("T" ("T" "+" "T" "-" "-" "T" "+" "T")))
+              (list))
+        (/ 360 n)))
+  
