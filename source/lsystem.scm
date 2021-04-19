@@ -17,8 +17,7 @@
 (provide koch-antisnowflake)
 (provide koch-curve)
 (provide hilbert-curve)
-(provide cesaro-fractal85)
-(provide cesaro-fractal90)
+(provide cesaro-fractal)
 (provide twindragon-curve)
 (provide terdragon-curve)
 (provide pentadendrite)
@@ -26,6 +25,8 @@
 (provide minkowski-island)
 (provide moore-curve)
 (provide fibonacci-fractal)
+(provide sierpinski-curve)
+(provide sierpinski-square)
 
 
 ;; DEFINITION
@@ -371,18 +372,11 @@
         90))
 
 ; The ``Turtle L-system'' corresponding to the Cesaro fractal (85)
-(define cesaro-fractal85
+(define cesaro-fractal
   (cons (list '("T")
               (list '("T" ("T" "-" "T" ("+" 2) "T" "-" "T")))
               (list))
         85))
-
-; The ``Turtle L-system'' corresponding to the Cesaro fractal (90)
-(define cesaro-fractal90
-  (cons (list '("T")
-              (list '("T" ("T" "-" "T" ("+" 2) "T" "-" "T")))
-              (list))
-        90))
 
 ; The ``Turtle L-system'' corresponding to the twindragon curve
 (define twindragon-curve
@@ -441,4 +435,21 @@
                     '("R" ("T"))
                     '("K" ("T"))
                     '("Q" ("T"))))
+        90))
+
+; The ``Turtle L-system'' corresponding to the Sierpinski curve
+(define sierpinski-curve
+  (cons (list '("F" "-" "-" "X" "F" "-" "-" "F" "-" "-" "X" "F")
+              (list '("X" ("X" "F" "+" "G" "+" "X" "F" "-" "-" "F" "-" "-" "X" "F" "+" "G" "+" "X")))
+              (list '("F" ("T"))
+                    '("G" ("T"))
+                    '("X" ())))
+        45))
+
+; The ``Turtle L-system'' corresponding to the Sierpinski square curve
+(define sierpinski-square
+  (cons (list '("F" "+" "X" "F" "+" "F" "+" "X" "F")
+              (list '("X" ("X" "F" "-" "F" "+" "F" "-" "X" "F" "+" "F" "+" "X" "F" "-" "F" "+" "F" "-" "X")))
+              (list '("F" ("T"))
+                    '("X" ())))
         90))
