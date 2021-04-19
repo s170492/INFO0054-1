@@ -67,8 +67,8 @@
   (lambda (drawing angle)
     (lambda (t-symb)
       (cond ((string=? t-symb "") drawing)
-            ((regexp-match? #px"^[TF+-](\\[\\d+(.\\d+)?\\])?$" t-symb)
-             (let* ((s (regexp-replace #px"\\[\\d+(.\\d+)?\\]" t-symb ""))
+            ((regexp-match? #px"^[TF+-](\\[\\d+([./]\\d+)?\\])?$" t-symb)
+             (let* ((s (regexp-replace #px"\\[\\d+([./]\\d+)?\\]" t-symb ""))
                     (x (string->number
                         (regexp-replace* #px"[TF+-]\\[|\\]" t-symb "")))
                     (defx (if x x 1)))

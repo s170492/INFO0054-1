@@ -249,7 +249,7 @@
     (if (not (param? lsymb)) lsymb
         (string-append (symb.head lsymb)
                        "["
-                       (string-join (map ~r (symb.params lsymb)) ", ")
+                       (string-join (map ~s (symb.params lsymb)) ", ")
                        "]"))))
                                                     
 ; if lstr is a ``L-system string'', (lstr->tstr lstr) is a ``Turtle string''
@@ -297,10 +297,10 @@
 ; The ``Turtle L-system'' corresponding to the plant growth
 (define plant-growth
   (cons (list '(("B" 1))
-              (list '(("B" x) (("T" x) "<" ("+" 5) ("B" (* 0.5 x)) ">" "<" ("-" 7) ("B" (* 0.5 x)) ">"
-                                ("-" 1) ("T" x) "<" ("+" 4) ("B" (* 0.5 x)) ">" "<" ("-" 7) ("B" (* 0.5 x)) ">"
-                                ("-" 1) ("T" x) "<" ("+" 3) ("B" (* 0.5 x)) ">" "<" ("-" 5) ("B" (* 0.5 x)) ">"
-                                ("-" 1) ("T" x) ("B" (* 0.5 x)))))
+              (list '(("B" x) (("T" x) "<" ("+" 5) ("B" (/ x 2)) ">" "<" ("-" 7) ("B" (/ x 2)) ">"
+                                ("-" 1) ("T" x) "<" ("+" 4) ("B" (/ x 2)) ">" "<" ("-" 7) ("B" (/ x 2)) ">"
+                                ("-" 1) ("T" x) "<" ("+" 3) ("B" (/ x 2)) ">" "<" ("-" 5) ("B" (/ x 2)) ">"
+                                ("-" 1) ("T" x) ("B" (/ x 2)))))
               (list '(("B" x) (("T" x)))))
         8))
 
