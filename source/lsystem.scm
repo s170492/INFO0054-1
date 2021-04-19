@@ -25,6 +25,7 @@
 (provide gosper-island)
 (provide minkowski-island)
 (provide moore-curve)
+(provide fibonacci-fractal)
 
 
 ;; DEFINITION
@@ -62,10 +63,10 @@
 ;;               a list of ``arithmetical expression'', its ``parameters''
 
 ; an ``arithmetical expression'' is either a number, a ``variable'' or a list
-; whose car is one of the special scheme symbols '+, '-, '*, '/ and whose cdr
-; is a list of ``arithmetical expressions''
+; whose car is one of the special scheme symbols '+, '-, '*, '/, 'sqrt, 'expt
+; and whose cdr is a list of ``arithmetical expressions''
 
-; a ``variable'' is a scheme symbol different from '+, '-, '*, '/ and '()
+; a ``variable'' is a scheme symbol different from '+, '-, '*, '/, 'sqrt, 'expt and '()
 
 
 ;; TURTLE L-SYSTEM GETTERS
@@ -208,7 +209,9 @@
                   (cond ((eq? op '+) (apply + args))
                         ((eq? op '-) (apply - args))
                         ((eq? op '*) (apply * args))
-                        ((eq? op '/) (apply / args))))))))          
+                        ((eq? op '/) (apply / args))
+                        ((eq? op 'sqrt) (apply sqrt args))
+                        ((eq? op 'expt) (apply expt args))))))))
 
 
 ;; GENERATING A STRING FROM A L-SYSTEM
@@ -427,4 +430,17 @@
                     '("R" ("+" "L" "T" "-" "R" "T" "R" "-" "T" "L" "+")))
               (list '("R" ())
                     '("L" ())))
+        90))
+
+; The ``Turtle L-system'' corresponding to the Fibonacci word fractal
+(define fibonacci-fractal
+  (cons (list '("L")
+              (list '("L" ("-" "R" "+" "L" "K" "L" "+" "R" "-"))
+                    '("R" ("+" "L" "-" "R" "Q" "R" "-" "L" "+"))
+                    '("K" ("L"))
+                    '("Q" ("R")))
+              (list '("L" ("T"))
+                    '("R" ("T"))
+                    '("K" ("T"))
+                    '("Q" ("T"))))
         90))

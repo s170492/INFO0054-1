@@ -26,3 +26,4 @@
 ;(time (generate-and-draw* gosper-island 6 500 500 "../figures/gosper-island.svg"))
 ;(time (generate-and-draw* minkowski-island 5 500 500 "../figures/minkowski-island.svg"))
 ;(time (generate-and-draw* moore-curve 5 500 500 "../figures/moore-curve.svg"))
+(time (generate-and-draw* fibonacci-fractal 7 500 500 "../figures/fibonacci-fractal.svg"))
