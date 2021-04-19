@@ -63,10 +63,10 @@
 ;;               a list of ``arithmetical expression'', its ``parameters''
 
 ; an ``arithmetical expression'' is either a number, a ``variable'' or a list
-; whose car is one of the special scheme symbols '+, '-, '*, '/, 'sqrt, 'expt
+; whose car is one of the special scheme symbols '+, '-, '*, '/
 ; and whose cdr is a list of ``arithmetical expressions''
 
-; a ``variable'' is a scheme symbol different from '+, '-, '*, '/, 'sqrt, 'expt and '()
+; a ``variable'' is a scheme symbol different from '+, '-, '*, '/ and '()
 
 
 ;; TURTLE L-SYSTEM GETTERS
@@ -209,9 +209,7 @@
                   (cond ((eq? op '+) (apply + args))
                         ((eq? op '-) (apply - args))
                         ((eq? op '*) (apply * args))
-                        ((eq? op '/) (apply / args))
-                        ((eq? op 'sqrt) (apply sqrt args))
-                        ((eq? op 'expt) (apply expt args))))))))
+                        ((eq? op '/) (apply / args))))))))
 
 
 ;; GENERATING A STRING FROM A L-SYSTEM
