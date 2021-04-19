@@ -377,7 +377,7 @@
 ; The ``Turtle L-system'' corresponding to the Cesaro fractal (85)
 (define (cesaro angle)
   (cons (list '("T")
-              (list '("T" ("T" "-" "T" ("+" 2) "T" "-" "T")))
+              (list '("T" ("T" "-" "T" "+" "+" "T" "-" "T")))
               (list))
         angle))
 
@@ -479,4 +479,3 @@
               (list '("T" ("T" "+" "T" "-" "-" "T" "+" "T")))
               (list))
         (/ 360 n)))
-  
